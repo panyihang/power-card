@@ -4,10 +4,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 
+//wifi信息及blinker的密钥
 #define auth ""
-#define ssid ""
+#define ssid "TP-LINK_5AFF"
 #define pswd ""
-#define bottenName "btn"
+
+#define buttonName "btn"
 
 int getPower = 16;
 int power = 4;
@@ -18,11 +20,11 @@ bool flag = true;
 
 ESP8266WiFiMulti wifiMulti;
 
-BlinkerButton Button1(bottenName);
+BlinkerButton Button1(buttonName);
 
 Ticker changeLed;
 
-void changeBotten()
+void changeButton()
 {
     if (digitalRead(power))
     {
@@ -64,20 +66,7 @@ void button1_callback(const String &state)
     delay(500);
     digitalWrite(power, HIGH);
 
-    /*
-    if (flag)
-    {
-        digitalWrite(power, !digitalRead(power));
-        if (digitalRead(power)== HIGH)
-        {
-            delay(500);
-            digitalWrite(power, LOW);
-        }
-        flag = false;
-    }
-    */
-
-    changeBotten();
+    changeButton();
 }
 
 void dataRead(const String &data)
@@ -114,12 +103,14 @@ void setup()
 
 void loop()
 {
+    //根据VBUS的状态确定是否进入低功耗模式
+
     if (digitalRead(getPower))
     {
         Blinker.run();
         if (!changeLed.active())
         {
-            changeLed.attach(0.005, changeTheLEDWhileComupterWakeup);
+            changeLed.attach(0.01, changeTheLEDWhileComupterWakeup);
         }
     }
     else
